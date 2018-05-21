@@ -13,8 +13,7 @@ end
 Atom(r) = Atom(r,zeros(dim), zeros(dim))
 
 
-@doc """function that creates the array of N atoms in a lattice of side L, with the temperature given by T"""->
-function initialize(N::Int64, T::Float64, rho::Float64)
+function initialize(N::Int64, T::Float64)
   L = 1.0
   atoms = Array{Atom,1}(N)
 
@@ -30,7 +29,7 @@ function initialize(N::Int64, T::Float64, rho::Float64)
     end
   end
 
-  U = computeenergyandforces!(atoms, L)
+  U = computeenergyandforces!(atoms)
 
   #Instantaneous kinetic temperature and energy
   T = K/(dim*(N))
@@ -41,12 +40,12 @@ end
 
 
 @doc """ Determine the interaction force for each pair of particles (i, j)"""->
-function computeenergyandforces!(atoms::Array{Atom,1}, L::Float64)
+function computeenergyandforces!(atoms::Array{Atom,1})
 
   U = 0.0
   atoms[1].f[1] = 0.
-  U += 2*(atoms[1].r[1])^2.
-  atoms[1].f[1] = -4.*atoms[1].r[1]
+  U += (atoms[1].r[1])^2./2.
+  atoms[1].f[1] = -atoms[1].r[1]
 
   return U
 end

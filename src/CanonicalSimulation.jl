@@ -38,14 +38,14 @@ end
 Auxiliar function that create the arrays where the data of the simulation will be stored
 """
 function initializearrays(numsteps::Int)
-  time = Array(Float64, numsteps+1)
-  energy = Array(Float64, numsteps+1)
-  kinetic = Array(Float64, numsteps+1)
-  potential = Array(Float64, numsteps+1)
-  temperature = Array(Float64, numsteps+1)
-  invariant = Array(Float64, numsteps+1)
-  pparticularatom =  Array(Float64, numsteps+1)
-  qparticularatom = Array(Float64, numsteps+1)
+  time = Array{Float64}(numsteps+1)
+  energy = Array{Float64}(numsteps+1)
+  kinetic = Array{Float64}(numsteps+1)
+  potential = Array{Float64}(numsteps+1)
+  temperature = Array{Float64}(numsteps+1)
+  invariant = Array{Float64}(numsteps+1)
+  pparticularatom =  Array{Float64}(numsteps+1)
+  qparticularatom = Array{Float64}(numsteps+1)
 
   return time, energy, kinetic, potential, temperature, invariant, pparticularatom, qparticularatom
 end
@@ -55,11 +55,11 @@ Main function to simulate the system with a given density `rho`, number of parti
 during a time `runtime` with a timestep `dt` and a thermostat charactherized by being of a type `thermotype` with parameter
 `Q`.
 """
-function run(runtime::Float64, rho::Float64, dt::Float64, T::Float64, N::Int64, Q::Float64, thermotype::ASCIIString)
+function run(runtime::Float64, dt::Float64, T::Float64, N::Int64, Q::Float64, thermotype::String)
 
   n = dim*(N)
   numsteps = round(Int, ceil(runtime/dt))
-  atoms, Tinst, K , U, L = initialize(N, T, rho)
+  atoms, Tinst, K , U, L = initialize(N, T)
   H = U + K
 
   thermomodel = eval(parse(thermotype))
@@ -69,8 +69,8 @@ function run(runtime::Float64, rho::Float64, dt::Float64, T::Float64, N::Int64, 
 
 
   ## Thermo variables
-  zetas = Array(Float64, numsteps+1)
-  nus =  Array(Float64, numsteps+1)
+  zetas = Array{Float64}(numsteps+1)
+  nus =  Array{Float64}(numsteps+1)
 
   ## Selecting an atom to study the distribution of a component (x-component) of the velocity and of the position with time
   particularatom = atoms[1]
@@ -98,7 +98,7 @@ function run(runtime::Float64, rho::Float64, dt::Float64, T::Float64, N::Int64, 
     for count in 1:numsteps
 
       thermostatstep!(atoms,  thermo, dt, N)
-      U =verlet!(atoms, dt, L)    ##It  can be measured before of applying the thermostat because the thermostat does not affect the positions.
+      U =verlet!(atoms, dt)    ##It  can be measured before of applying the thermostat because the thermostat does not affect the positions.
       thermostatstep!(atoms,thermo, dt, N)
 
       K = measurekineticenergy(atoms)

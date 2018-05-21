@@ -9,7 +9,7 @@ export verlet!, run
 """
 Function that implements the velocity Verlet algorithm to integrate the equations of motion with step size `dt`
 """
-function verlet!(atoms::Array{Atom,1}, dt::Float64, L::Float64)
+function verlet!(atoms::Array{Atom,1}, dt::Float64)
   N = length(atoms)
 
   # Half-force step
@@ -27,7 +27,7 @@ function verlet!(atoms::Array{Atom,1}, dt::Float64, L::Float64)
   end
 
   # Positions were changed, so we compute again the forces
-  U = computeenergyandforces!(atoms, L)
+  U = computeenergyandforces!(atoms)
 
   # Final half-force step
   for i in 1:N
